@@ -1,0 +1,160 @@
+---
+title: "Teste - Interdisciplinaridade e Evidências no Debate Educacional (IEDE)"
+author: "Thais Pereira"
+date: "07.05.2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, out.width="50%"}
+(knitr::opts_chunk$set(echo=FALSE, error=FALSE, warning=FALSE, message=FALSE)) 
+```
+
+```{css Estilo do Relatório, echo=FALSE}
+
+h1.title{ 
+    color: #bf7d70;
+    font-size: 26px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+h4.author{ 
+    color: #bf7d70;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+}
+
+h4.date{ 
+    color: #bf7d70;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap');
+
+h2 {
+  font-family: 'Lora', serif;
+  font-size: 15px;
+  text-align: justify;
+}
+
+body {
+  font-family: 'Lora', serif;
+  font-size: 15px;
+  text-align: justify;
+}
+
+
+
+```
+
+```{r include=FALSE}
+
+library("tidyverse")
+library("ggplot2")
+library("readxl")
+library("reactable")
+
+```
+
+
+```{r include=FALSE}
+
+
+
+file1 <- "https://raw.githubusercontent.com/thais01fernandes/teste_iede/master/dados_limpos"
+dados_limpos <- read_delim(file1, delim = ",", 
+                               locale = locale(encoding='latin1'))
+
+
+
+```
+
+## **1.Leia a reportagem da Folha de S. Paulo. Após a leitura, reflita sobre as seguintes questões:**
+
+  **O que você entendeu pela reportagem? Tem alguma crítica ou
+considerações em relação as análises de dados apresentada na
+reportagem?**
+  **Há análises que não foram feitas e deveriam ter sido?**
+
+A nota técnica produzida pela "Todos Pela Educação", tem como objetivo apresentar  dados a respeito do impacto da pandemia de Covid-19 na alfabetização de crianças brasileiras entre 6 e 7 anos de idade, utilizando a Pesquisa Nacional por Amostra de Domicílios Continua (PNAD contínua), produzida pelo IBGE anualmente, em que os entrevistados de domícilios com crianças nessa faixa etária respondem se elas sabem ou não ler e escrever. Os dados demostram com muita clareza o impacto negativo da pandemia na alfabetização infantil, principalmente em 2021, ano em que o aumento de crianças não alfabetizadas foi realmente preocupante, indo de 25,1% em 2019 para 40,8% em 2021. A nota também apresenta as disparidades entre os dados de crianças brancas, pretas e pardas, assim como entre domícilios mais ricos e mais pobres, demonstrando que famílias em situação de maior vulnerabilidade socioeconômica, assim como pretas e pardas, foram as mais atingidas pelo aumento da não alfabetização nos últimos dois anos. 
+
+Como a nota pressupõe uma divulgação desses dados de modo a fornecer evidências para a atuação do poder público, algumas análises poderiam ter sido adicionadas à apresentação, como por exemplo as diferenças entre os estados brasileiros, de modo que pudessemos ver as disparidades que provavelmente existem entre as regiões. Esse dado geral de crianças não alfabetizadas e alfabetizadas poderia ser apresentado por meio de um mapa de calor, com as regiões com maior taxa de crianças não alfabetizadas com cores mais escuras e as regiões com menor taxa com cores mais claras, um gráfico de barros com os estados brasileiros no eixo X e o percentual de crianças não alfabetizadas no eixo Y também seria uma forma interessante de visualizar esse dado. Também poderíamos observar por estado a proporção de crianças pretas, pardas e brancas não alfabetizadas, também num gráfico de barras, mas onde as barras estivessem 100% preenchidas e dividivdas em três categorias representando a proporção de crianças brancas, pardas e pretas. Por fim, a disparidades entre domícilios mais ricos e mais pobres também poderia ter sido visualizado geograficamente, num gráfico de barras 100% preenchidas, onde no eixo X teríamos os estados brasileiros e ao longo do eixo Y duas categorias: o estrato 25% mais rico e o estrato 25% mais pobre, com barras do tamanho da proporção de crianças não falfabetizadas para cada estrato.    
+
+Para uma análise de correlação entre possíveis causas da não alfabetização infantil, poderiam ter sido incluídas para cruzamento de informações o dado de evasão escolar e trabalho infantil, também por unidade federativa e macro regiões. 
+
+## **2.Com base nos microdados do Censo Escolar da Educação Básica 2021, disponíveis no site do Inep, calcule o percentual de escolas por estado que não possuem internet.**
+
+Conforme solicitado, optei por apresentar os dados em dois formatos, primeiramente um gráfico com todos os estados brasileiros e organizado de forma descrecente, de modo que podemos visualizar que os primeiros da lista possuem maior número de escolas com acesso a internet e essa quantidade vai caindo até chegar nos estados com pior resultado, como é o caso dos estados do norte: Pará, Amazonas e Acre. 
+
+
+```{r out.width = "70%"}
+
+  # Gráfico: 
+
+dados_limpos$SG_UF <- factor(dados_limpos$SG_UF, 
+                                          levels= c("AC", "AM", "PA", "MA", "RR", "AP", "PI", "BA", "PE", "PB", "AL", "RN", "SE", "ES", "TO", "RO", "MG", "CE", "MT", "RJ", "SP", "PR", "RS", "SC","GO", "DF", "MS", ordered=TRUE))
+  
+  dados_limpos %>% 
+  mutate(pct_2 = round(pct*100)) %>% 
+  ggplot() + 
+  geom_col(aes(x = SG_UF, y = pct_2, fill = IN_INTERNET), position = "fill") + 
+  scale_fill_manual(name = "Possui internet?", values = c("#bf7d70", "#7e9562"), labels = c("Não", "Sim"))+
+  scale_y_continuous(labels = scales::percent)+
+  labs(title = "",
+        x = "",
+        y = "") +
+  theme_bw() +
+  theme(plot.title = element_text(family = "serif", size = 14, hjust = 0.2, colour = "black"),
+        text = element_text(family = "serif"),
+        axis.text = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12)) +
+   coord_flip()
+  
+  
+
+```
+
+A segunda forma de apresentação é essa tabela produzida com o pacote "reactable" do R. Nela podemos olhar os dados com mais detalhe, com as porcentagens exatas de quantidade de escolas sem acesso a internet por estado brasileiro. 
+
+```{r fig.align = 'center', out.width = "70%"}
+
+dados_limpos %>%
+      filter(IN_INTERNET == "Não") %>% 
+      select(SG_UF, pct) %>% 
+      arrange(-pct) %>% 
+      reactable(
+      defaultPageSize = 10,
+      searchable = TRUE,
+      outlined = TRUE,
+      fullWidth = F,
+      showPageInfo = TRUE, 
+      showPageSizeOptions = TRUE,
+      defaultColDef = colDef(
+      align = "center",
+      headerStyle = list(background = "#bf7d70")),
+      columns = list(
+      SG_UF = colDef("UF", align = "center", minWidth = 20),
+      pct = colDef("Porcentagem de Escolas Sem Internet", minWidth = 50, align = "center", format = colFormat(percent = TRUE, digits = 0)), 
+      bordered = FALSE, striped = TRUE, highlight = TRUE))
+     
+
+```
+
+Por fim, gostaria de deixar o link para o repositório do github onde deixei o script usado para gerar essas visualizações e resumo dos dados: https://github.com/thais01fernandes/teste_iede
+
+
+
+
+
+
+
+
+
+
+
